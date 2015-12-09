@@ -2,42 +2,33 @@
 global $wpdb;
 $user_count = $wpdb->get_var( "show tables like 'dgpc_herramienta'");
 if(count($user_count)==0){
-
-	$wpdb->query("
-SET SQL_MODE = 'NO_AUTO_VALUE_ON_ZERO';
-SET time_zone = '+00:00';
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
-
+  $charset_collate = $wpdb->get_charset_collate();
+	$sql="
 CREATE TABLE `dgpc_ambitoaplicacion` (
   `idambito` int(11) NOT NULL,
   `nombre` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) $charset_collate;
 
 CREATE TABLE `dgpc_ambitoherramienta` (
   `idambito` int(11) NOT NULL,
   `idherramienta` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) $charset_collate;
 
 CREATE TABLE `dgpc_area` (
   `idarea` int(11) NOT NULL,
   `nombre` varchar(165) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) $charset_collate;
 
 CREATE TABLE `dgpc_claseherramienta` (
   `idclase` int(11) NOT NULL,
   `nombre` varchar(75) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) $charset_collate;
 
 CREATE TABLE `dgpc_componente` (
   `idcomponente` int(11) NOT NULL,
   `idarea` int(11) DEFAULT NULL,
   `nombre` varchar(150) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) $charset_collate;
 
 CREATE TABLE `dgpc_contacto` (
   `idcontacto` int(11) NOT NULL,
@@ -46,27 +37,27 @@ CREATE TABLE `dgpc_contacto` (
   `telefono` varchar(15) DEFAULT NULL,
   `email` varchar(65) DEFAULT NULL,
   `website` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) $charset_collate;
 
 CREATE TABLE `dgpc_contactoherramienta` (
   `idcontacto` int(11) NOT NULL,
   `idherramienta` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) $charset_collate;
 
 CREATE TABLE `dgpc_criteriovalidacion` (
   `idcriterio` int(11) NOT NULL,
   `nombre` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) $charset_collate;
 
 CREATE TABLE `dgpc_grupoherramienta` (
   `idgrupo` int(11) NOT NULL,
   `idherramienta` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) $charset_collate;
 
 CREATE TABLE `dgpc_grupovulnerable` (
   `idgrupo` int(11) NOT NULL,
   `nombre` varchar(200) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) $charset_collate;
 
 CREATE TABLE `dgpc_herramienta` (
   `idherramienta` int(11) NOT NULL,
@@ -83,34 +74,34 @@ CREATE TABLE `dgpc_herramienta` (
   `idclaseherramienta` int(11) NOT NULL,
   `idioma` varchar(45) DEFAULT NULL,
   `pais` varchar(45) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) $charset_collate;
 
 CREATE TABLE `dgpc_herramientaincluye` (
   `iditem` int(11) NOT NULL,
   `idherramienta` int(11) NOT NULL,
   `pregunta` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) $charset_collate;
 
 CREATE TABLE `dgpc_institucion` (
   `idinstitucion` int(11) NOT NULL,
   `nombre` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) $charset_collate;
 
 CREATE TABLE `dgpc_itemincluye` (
   `iditem` int(11) NOT NULL,
   `nombre` varchar(65) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) $charset_collate;
 
 CREATE TABLE `dgpc_preguntaherramienta` (
   `idpregunta` int(11) NOT NULL,
   `idherramienta` int(11) NOT NULL,
   `respuesta` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) $charset_collate;
 
 CREATE TABLE `dgpc_preguntas` (
   `idpregunta` int(11) NOT NULL,
   `pregunta` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) $charset_collate;
 
 CREATE TABLE `dgpc_publicacion` (
   `idpublicacion` int(11) NOT NULL,
@@ -119,18 +110,18 @@ CREATE TABLE `dgpc_publicacion` (
   `portada` varchar(255) DEFAULT NULL,
   `tipoarchivo` varchar(45) DEFAULT NULL,
   `fechaPublicacion` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) $charset_collate;
 
 CREATE TABLE `dgpc_tipoherramienta` (
   `idtipo` int(11) NOT NULL,
   `nombre` varchar(65) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) $charset_collate;
 
 CREATE TABLE `dgpc_validacion` (
   `idcriterio` int(11) NOT NULL,
   `idherramienta` int(11) NOT NULL,
   `descripcion` text
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) $charset_collate;
 
 
 ALTER TABLE `dgpc_ambitoaplicacion`
@@ -270,12 +261,10 @@ ALTER TABLE `dgpc_validacion`
   ADD CONSTRAINT `idcriterioval` FOREIGN KEY (`idcriterio`) REFERENCES `dgpc_criteriovalidacion` (`idcriterio`) ON UPDATE CASCADE,
   ADD CONSTRAINT `idheramienta` FOREIGN KEY (`idherramienta`) REFERENCES `dgpc_herramienta` (`idherramienta`) ON UPDATE CASCADE;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+		";
 
-
-		");
+require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+  dbDelta( $sql );
 }
 
 ?>
